@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="60">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d [%t] %-5p %c{2} %L %x - %m%n" />
+        </Console>
+        <RollingRandomAccessFile name="FILE"
+                                 fileName="logs/my-cool-service.log"
+                                 filePattern="logs/my-cool-service.log.%d{yyyy-MM-dd}.%i.gz">
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="300 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="100" fileIndex="min" compressionLevel="1" />
+            <PatternLayout pattern="%d [%t] %-5p %c{2} %L %x - %m%n" />
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Root level="WARN">
+            <AppenderRef ref="FILE" />
+            <AppenderRef ref="Console" />
+        </Root>
+        <Logger name="com.swisscom" level="TRACE" />
+        <Logger name="org.springframework" level="TRACE" />
+
+    </Loggers>
+</Configuration>

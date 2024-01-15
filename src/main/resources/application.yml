@@ -1,0 +1,52 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: my-cool-service
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: /_monitoring
+  health:
+    defaults:
+      enabled: true
+
+api:
+  authorization:
+    users:
+      adminuser:
+        password: "{noop}adminuser"
+        config:
+          timeout: false
+          roles:
+            - ROLE_ADMIN
+      secadminuser:
+        password: "{noop}secadminuser"
+        config:
+          timeout: false
+          roles:
+            - ROLE_SECADMIN
+      rolelessuser:
+        password: "{noop}rolelessuser"
+        config:
+          timeout: true
+
+opa:
+  swisscom:
+    auth:
+      endpoint:
+        allow: http://opa-service.default.svc.cluster.local:8181/v1/data/swisscom/auth/allow
