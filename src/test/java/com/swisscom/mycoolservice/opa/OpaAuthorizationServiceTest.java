@@ -8,8 +8,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -23,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.swisscom.mycoolservice.properties.ApplicationProperties;
 import com.swisscom.mycoolservice.properties.ApplicationProperties.User;
-import com.swisscom.mycoolservice.properties.ApplicationProperties.UserConfig;
 import com.swisscom.mycoolservice.servicesimpl.ConfigurationService;
 
 @SpringBootTest
@@ -53,10 +50,10 @@ public class OpaAuthorizationServiceTest {
     @Test
     void testCheckAuthorizationAuthorized() throws JsonProcessingException {
         String httpMethodType = "POST";
-        createMockUser(new String[]{"ROLE_ADMIN"});
-        when(configurationService.getCurrentUser()).thenReturn(getMockUser());
-        when(configurationService.getCurrentUserName()).thenReturn("mockUser");
-        String requestBody = subject.buildOpaRequestPayload(httpMethodType, getMockUser()).getRequestBody();
+        User adminUser = getUser("adminuser");
+        when(configurationService.getCurrentUser()).thenReturn(adminUser);
+        when(configurationService.getCurrentUserName()).thenReturn("adminuser");
+        String requestBody = subject.buildOpaRequestPayload(httpMethodType, adminUser).getRequestBody();
         when(restTemplate.postForObject(opaAuthEndpoint, requestBody, OpaResponsePayload.class))
                 .thenReturn(new OpaResponsePayload(true));
 
@@ -69,10 +66,10 @@ public class OpaAuthorizationServiceTest {
     @Test
     void testCheckAuthorizationUnauthorized() throws JsonProcessingException {
         String httpMethodType = "POST";
-        createMockUser(new String[]{"ROLE_SECADMIN"});
-        when(configurationService.getCurrentUser()).thenReturn(getMockUser());
-        when(configurationService.getCurrentUserName()).thenReturn("mockUser");
-        String requestBody = subject.buildOpaRequestPayload(httpMethodType, getMockUser()).getRequestBody();
+        User secadminuser = getUser("secadminuser");
+        when(configurationService.getCurrentUser()).thenReturn(secadminuser);
+        when(configurationService.getCurrentUserName()).thenReturn("secadminuser");
+        String requestBody = subject.buildOpaRequestPayload(httpMethodType, secadminuser).getRequestBody();
         when(restTemplate.postForObject(opaAuthEndpoint, requestBody, OpaResponsePayload.class))
                 .thenReturn(new OpaResponsePayload(false));
 
@@ -85,10 +82,10 @@ public class OpaAuthorizationServiceTest {
     @Test
     void testCheckAuthorizationException() throws JsonProcessingException {
         String httpMethodType = "POST";
-        createMockUser(new String[]{"ROLE_SECADMIN"});
-        when(configurationService.getCurrentUser()).thenReturn(getMockUser());
-        when(configurationService.getCurrentUserName()).thenReturn("mockUser");
-        String requestBody = subject.buildOpaRequestPayload(httpMethodType, getMockUser()).getRequestBody();
+        User secadminuser = getUser("secadminuser");
+        when(configurationService.getCurrentUser()).thenReturn(secadminuser);
+        when(configurationService.getCurrentUserName()).thenReturn("secadminuser");
+        String requestBody = subject.buildOpaRequestPayload(httpMethodType, secadminuser).getRequestBody();
         when(restTemplate.postForObject(any(), any(), eq(OpaResponsePayload.class)))
                 .thenThrow(new RuntimeException("Test Exception"));
 
@@ -98,15 +95,7 @@ public class OpaAuthorizationServiceTest {
         verify(restTemplate, times(1)).postForObject(opaAuthEndpoint, requestBody, OpaResponsePayload.class);
     }
 
-    private void createMockUser(String[] roles) {
-        Map<String, User> users = applicationProperties.getUsers();
-        UserConfig userConfig = new UserConfig();
-        userConfig.setRoles(roles);
-        users.put("mockUser", User.builder().password("testPassword").config(userConfig).build());
-        applicationProperties.setUsers(users);
-    }
-
-    private ApplicationProperties.User getMockUser() {
-        return applicationProperties.getUsers().get("mockUser");
+    private ApplicationProperties.User getUser(String userName) {
+        return applicationProperties.getUsers().get(userName);
     }
 }

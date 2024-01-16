@@ -5,8 +5,6 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import lombok.Builder;
-
 /**
  * Configuration properties class for API authorization in the application.
  * It holds user-specific information and configurations.
@@ -26,7 +24,6 @@ public class ApplicationProperties {
     /**
      * User class
      * */
-    @Builder
     public static class User {
         private String password;
         private UserConfig config;

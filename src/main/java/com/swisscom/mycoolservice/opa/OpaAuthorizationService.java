@@ -1,5 +1,7 @@
 package com.swisscom.mycoolservice.opa;
 
+import java.util.Arrays;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +81,11 @@ public class OpaAuthorizationService {
         // For simplicity, using a Map here
         java.util.Map<String, Object> inputMap = new java.util.HashMap<>();
         inputMap.put("method", httpMethodType);
-        inputMap.put("roles", java.util.Arrays.asList(roles));
-
+        if (roles != null) {
+            inputMap.put("roles", Arrays.asList(roles));
+        } else {
+            inputMap.put("roles", null);
+        }
         // Create a Map to represent the overall structure
         java.util.Map<String, Object> overallMap = new java.util.HashMap<>();
         overallMap.put("input", inputMap);
