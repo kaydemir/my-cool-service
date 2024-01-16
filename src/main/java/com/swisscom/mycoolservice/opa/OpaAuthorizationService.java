@@ -19,14 +19,19 @@ public class OpaAuthorizationService {
 
     protected static final Logger logger = LogManager.getLogger(OpaAuthorizationService.class);
 
-    @Value("${opa.swisscom.auth.endpoint.allow}")
-    private String opaAuthEndpoint;
+    private final String opaAuthEndpoint;
+    private final ConfigurationService configurationService;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    private ConfigurationService configurationService;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    public OpaAuthorizationService(
+            @Value("${opa.swisscom.auth.endpoint.allow}") String opaAuthEndpoint,
+            ConfigurationService configurationService,
+            RestTemplate restTemplate) {
+        this.opaAuthEndpoint = opaAuthEndpoint;
+        this.configurationService = configurationService;
+        this.restTemplate = restTemplate;
+    }
 
     public boolean checkAuthorization(String httpMethodType) {
         // Get authenticated user's information
@@ -58,7 +63,7 @@ public class OpaAuthorizationService {
         }
     }
 
-    private OpaRequestPayload buildOpaRequestPayload(String httpMethodType, User user) throws JsonProcessingException {
+    OpaRequestPayload buildOpaRequestPayload(String httpMethodType, User user) throws JsonProcessingException {
 
         OpaRequestPayload opaRequestPayload = new OpaRequestPayload();
         opaRequestPayload.setRequestBody(constructJsonInput(httpMethodType, user.getConfig().getRoles()));
