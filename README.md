@@ -121,7 +121,7 @@ You are ready to call REST API's provided for the task by using `curl` command b
 <b>Note:</b> For bypassing SSL verification, you can use `-k` (it is not a recommended practice) or use http in the curl command directly <br>
 
 For SSL verification, you need to import the [server.cer](server.cer) to your computer for SSL handshake between client and server.<br>
-
+Self signed certificates created by using [mkcert](https://github.com/FiloSottile/mkcert)
 
 ##### 3.1.1 GET users endpoint
 
@@ -159,7 +159,7 @@ You can use only the user with admin role to create user.
 Request:
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
-$curl --cacert server.cer --location 'https://localhost:30000/api/users' \
+$ curl --cacert server.cer --location 'https://localhost:30000/api/users' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Basic YWRtaW51c2VyOmFkbWludXNlcg==' \
 --data-raw '{
