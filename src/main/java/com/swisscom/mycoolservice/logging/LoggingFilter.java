@@ -39,7 +39,7 @@ import com.swisscom.mycoolservice.servicesimpl.ConfigurationService;
 import com.swisscom.mycoolservice.util.PasswordHideUtil;
 
 /**
- * responsible for logging  every API request and response
+ * responsible for logging every API request and response
  */
 @Component
 public class LoggingFilter extends OncePerRequestFilter {

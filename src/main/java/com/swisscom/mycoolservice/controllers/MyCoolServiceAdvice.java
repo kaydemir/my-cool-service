@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.swisscom.mycoolservice.exception.DuplicateBeanException;
-
+/**
+ * Global exception handling advice for the MyCoolService application.
+ * Handles specific exceptions and provides appropriate responses.
+ */
 @RestControllerAdvice("com.swisscom.mycoolservice")
 public class MyCoolServiceAdvice {
 

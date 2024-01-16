@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.swisscom.mycoolservice.beans.User;
 import com.swisscom.mycoolservice.services.UserService;
-
+/**
+ * Implementation of the UserService interface, providing operations for user management.
+ */
 @Service
 public class UserServiceImpl implements UserService {
 

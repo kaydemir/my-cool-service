@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.swisscom.mycoolservice.beans.User;
 import com.swisscom.mycoolservice.entity.UserEntity;
 
+/** responsible to convert user entity to bean and vice versa */
 public class UserConverter {
 
     private UserConverter(){

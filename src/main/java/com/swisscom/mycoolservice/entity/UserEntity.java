@@ -6,7 +6,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
-
+/**
+ * Represents a persistent entity for storing user information in a database.(H2 in memory database)
+ */
 @Entity
 @Data
 public class UserEntity {

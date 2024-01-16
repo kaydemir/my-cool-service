@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
+/**
+ * Configuration properties class for API authorization in the application.
+ * It holds user-specific information and configurations.
+ */
 @ConfigurationProperties(prefix = "api.authorization")
 public class ApplicationProperties {
     private Map<String, User> users = new HashMap<>();

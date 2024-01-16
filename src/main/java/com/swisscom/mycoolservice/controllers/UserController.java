@@ -21,11 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.swisscom.mycoolservice.beans.User;
 import com.swisscom.mycoolservice.services.UserService;
 
-
+/**
+ * Controller class for handling user-related operations.
+ * All endpoints are under the base path "/api/users" and produce JSON responses.
+ */
 @RestController
 @RequestMapping(value = ENDPOINT, produces = { MediaType.APPLICATION_JSON_VALUE })
 public class UserController {
-
+    /**
+     * Base path for all endpoints in this controller.
+     */
     public static final String ENDPOINT = "/api/users";
 
     private static final Logger logger = LogManager.getLogger(UserController.class);
@@ -38,7 +43,11 @@ public class UserController {
         this.userService = userService;
         logger.trace("{} initialized", this.getClass().getName());
     }
-
+    /**
+     * Endpoint to retrieve a list of all users.
+     *
+     * @return ResponseEntity containing a list of users if successful, or an error response otherwise.
+     */
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<User>> getUsers() {
@@ -47,7 +56,12 @@ public class UserController {
         logger.debug(RETURNING_RESPONSE, response);
         return response;
     }
-
+    /**
+     * Endpoint to create a new user.
+     *
+     * @param user The User object representing the user to be created.
+     * @return ResponseEntity indicating success or failure of the user creation process.
+     */
     @PostMapping()
     @PreAuthorize("isAuthenticated()")
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -57,6 +71,4 @@ public class UserController {
         logger.debug(RETURNING_RESPONSE, response);
         return response;
     }
-
-
 }

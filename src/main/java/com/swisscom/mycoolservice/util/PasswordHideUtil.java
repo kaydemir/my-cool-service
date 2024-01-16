@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** utility class to mask password on the logs for API requests */
 public class PasswordHideUtil {
 
     protected static final Logger logger = LogManager.getLogger(PasswordHideUtil.class);

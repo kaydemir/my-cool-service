@@ -28,12 +28,12 @@ spec:
             - "/policies"
           volumeMounts:
             - readOnly: true
-              mountPath: /policies
-              name: example-policy
+              mountPath: /policies/auth-policy
+              name: auth-policy
       volumes:
-        - name: example-policy
+        - name: auth-policy
           configMap:
-            name: example-policy
+            name: auth-policy
 ---
 apiVersion: v1
 kind: Service

@@ -11,14 +11,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swisscom.mycoolservice.properties.ApplicationProperties.User;
 import com.swisscom.mycoolservice.servicesimpl.ConfigurationService;
-
+/**
+ * Service class for handling authorization checks using Open Policy Agent (OPA).
+ */
 @Service
 public class OpaAuthorizationService {
 
     protected static final Logger logger = LogManager.getLogger(OpaAuthorizationService.class);
 
     @Value("${opa.swisscom.auth.endpoint.allow}")
-    private String opaIsAdminEndpoint;
+    private String opaAuthEndpoint;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -35,8 +37,8 @@ public class OpaAuthorizationService {
             OpaRequestPayload opaRequestPayload = buildOpaRequestPayload(httpMethodType, currentUser);
             // Send the request to OPA and parse the response
             String requestBody = opaRequestPayload.getRequestBody();
-            logger.info("Authorization Request URL: {}  Payload: {}", opaIsAdminEndpoint, requestBody);
-            OpaResponsePayload opaResponsePayload = restTemplate.postForObject(opaIsAdminEndpoint, requestBody, OpaResponsePayload.class);
+            logger.info("Authorization Request URL: {}  Payload: {}", opaAuthEndpoint, requestBody);
+            OpaResponsePayload opaResponsePayload = restTemplate.postForObject(opaAuthEndpoint, requestBody, OpaResponsePayload.class);
             if (opaResponsePayload == null) {
                 logger.warn("Cannot receive response for user '{}' authorization failure.", currentUserName);
                 return false;

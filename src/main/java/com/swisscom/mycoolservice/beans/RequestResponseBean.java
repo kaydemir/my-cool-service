@@ -25,14 +25,13 @@ public class RequestResponseBean implements Serializable {
     private String thread = "";
     private long duration;
 
-    private long responseTime; //(in epoch so query can be optimized)
+    private long responseTime;
     private String responseData = "";
     private int responseCode;
     private int responseHttpCode;
 
-    //    request headers - each as individual fields, include only our special headers only
-//    include x-forwarded-for even though its not our header
-//    queryParameters - each as individual fields, add prefix qp_ for each query parameter
+    // request headers - each as individual fields
+    // include x-forwarded-for even though its not our header
     private Map<String,String> requestHeaders;
 
 

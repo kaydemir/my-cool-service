@@ -15,12 +15,15 @@ import com.swisscom.mycoolservice.entity.UserEntity;
 import com.swisscom.mycoolservice.exception.DuplicateBeanException;
 import com.swisscom.mycoolservice.repository.UserRepository;
 import com.swisscom.mycoolservice.util.UserConverter;
-
+/**
+ * this class is responsible to user management operation
+ *  */
 @Component
 public class UserManagementComponent {
 
     private static final Logger logger = LogManager.getLogger(UserManagementComponent.class);
-
+    // any feature that specific for user in the system should be autowired here
+    // e.g. enhanced password validation, revoke user's token, send mail to user etc.
     private UserRepository userRepository;
 
     @Autowired

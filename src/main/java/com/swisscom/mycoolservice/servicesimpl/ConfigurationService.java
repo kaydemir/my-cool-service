@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.swisscom.mycoolservice.properties.ApplicationProperties;
 import com.swisscom.mycoolservice.properties.ApplicationProperties.User;
-
+/**
+ * Service class for retrieving configuration and user information based on the authenticated user.
+ */
 @Service
 public class ConfigurationService {
 
