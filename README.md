@@ -113,6 +113,10 @@ secadminuser   secadminuser   ROLE_SECADMIN
 rolelessuser   rolelessuser     -
 ```
 
+For bypassing SSL verification, you can use -k (it is not a recommended practice) or you can
+import the [server.crt](server.crt) to your computer for SSL handshake before sending curl request, 
+or you can directly use http
+
 ##### 3.1.1 GET users endpoint
 
 Basic authentication is needed to invoke API. 
@@ -120,7 +124,7 @@ You can use one of the users above to authenticate and retrieve the results.
 
 Request:
 ```
-curl --location 'https://my-cool-service:8000/api/users' \
+curl -k --location 'https://localhost:30000/api/users' \
 --header 'Authorization: Basic cm9sZWxlc3N1c2VyOnJvbGVsZXNzdXNlcg=='
 ```
 
@@ -147,7 +151,7 @@ You can use only the user with admin role to create user.
 
 Request:
 ```
-curl --location 'https://my-cool-service:8000/api/users' \
+curl -k --location 'https://localhost:30000/api/users' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Basic YWRtaW51c2VyOmFkbWludXNlcg==' \
 --data-raw '{
