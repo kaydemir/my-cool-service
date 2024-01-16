@@ -159,7 +159,7 @@ You can use only the user with admin role to create user.
 Request:
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
-$curl --location 'https://localhost:30000/api/users' \
+$curl --cacert server.cer --location 'https://localhost:30000/api/users' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Basic YWRtaW51c2VyOmFkbWludXNlcg==' \
 --data-raw '{
