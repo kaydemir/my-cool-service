@@ -42,25 +42,29 @@ Other requirements can be found in the [pom.xml](pom.xml)
 ### 2. How to start the clusters
 
 Based on the operating system, you will need [Kubernetes](https://kubernetes.io/releases/download/) (k8s) installed on your machine to start the `my-cool-service` and `OPA` clusters.
-[Docker Desktop](https://docs.docker.com/desktop/kubernetes/) or [MiniKube](https://minikube.sigs.k8s.io/docs/start/) is an alternative where you can also start and deploy the pods kubernetes clusters.
+[Kubernetes for Docker Desktop](https://docs.docker.com/desktop/kubernetes/) or [MiniKube](https://minikube.sigs.k8s.io/docs/start/) is an alternative where you can also start and deploy the pods kubernetes clusters.
 
-This document explains how to start Kubernetes with Docker Desktop.
-Execute the following commands below step by step in the related directory.
+This document explains how to start Kubernetes with Docker Desktop. <br>
+Similar actions can be taken on different alternatives. <br>
+<br>
+Execute the following commands below step by step in the related directory. <br>
 
-1. Install Docker Desktop and followenable hyper V by using the command below and Virtualization from BIOS
+1. Enable virtualization from BIOS, and <br>
+   Execute Hyper V command below from the command prompt on top of the place where you download the project <br>
+   You are ready to install [Docker Desktop for Windows](https://docs.docker.com/desktop/install/windows-install/) and then [Kubernetes for Docker Desktop](https://docs.docker.com/desktop/kubernetes/)
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
 $ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
 ```
 
-2. open a command prompt where you download the project and configure kubectl to use this following namespace
+2. Configure `kubectl` to use following namespace
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
 $ kubectl config set-context docker-desktop
 $ kubectl config use-context docker-desktop 
 ```
 
-3. Set the authorization policies for `Kubernetes` (environment variable) and `OPA`
+3. Set the authorization policies for `OPA` and  environment variable for`Kubernetes`
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
@@ -80,32 +84,31 @@ kube-root-ca.crt   1      5h31m
 5. Start `OPA` and `my-cool-service` clusters
 
 ```
-User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/policies/swisscom/auth
+User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
 $ cd ~/IdeaProjects/my-cool-service/
 $ kubectl apply -f my-cool-service-deployment.yaml
 $ kubectl apply -f opa-deployment.yaml
 ```
 
-6. Check the status of pods if the services are running and deployment is successful
+6. Check the status of pods if the deployment is successful and clusters are running
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
-$ kubectl get pods
-NAME                                          READY   STATUS    RESTARTS   AGE
-my-cool-service-deployment-7bbbcd5856-fbzmj   1/1     Running   0          4h1m
-opa-5cc6d5dcfd-dcgtz                          1/1     Running   0          4h59m
-
 $ kubectl get deployments
 NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
 my-cool-service-deployment   1/1     1            1           4h4m
 opa                          1/1     1            1           5h2m
+$ kubectl get pods
+NAME                                          READY   STATUS    RESTARTS   AGE
+my-cool-service-deployment-7bbbcd5856-fbzmj   1/1     Running   0          4h1m
+opa-5cc6d5dcfd-dcgtz                          1/1     Running   0          4h59m
 ```
 
 ### 3. Testing the REST endpoints
 
 #### 3.1 Predefined users
 
-There are 3 users defined in the system with the following configuration:
+There are 3 authentication users predefined in the system with the following configuration; <br>
 ```
 USERNAME    |  PASSWORD   |   ROLES
 adminuser      adminuser      ROLE_ADMIN
@@ -113,9 +116,12 @@ secadminuser   secadminuser   ROLE_SECADMIN
 rolelessuser   rolelessuser     -
 ```
 
-For bypassing SSL verification, you can use -k (it is not a recommended practice) or you can
-import the [server.crt](server.crt) to your computer for SSL handshake before sending curl request, 
-or you can directly use http
+You are ready to call REST API's provided for the task by using `curl` command below or [Postman](https://www.postman.com/downloads/) <br>
+<br>
+<b>Note:</b> For bypassing SSL verification, you can use `-k` (it is not a recommended practice) or use http in the curl command directly <br>
+
+For SSL verification, you need to import the [server.crt](server.crt) to your computer for SSL handshake between client and server.<br>
+
 
 ##### 3.1.1 GET users endpoint
 
@@ -124,7 +130,7 @@ You can use one of the users above to authenticate and retrieve the results.
 
 Request:
 ```
-curl -k --location 'https://localhost:30000/api/users' \
+curl --location 'https://localhost:30000/api/users' \
 --header 'Authorization: Basic cm9sZWxlc3N1c2VyOnJvbGVsZXNzdXNlcg=='
 ```
 
@@ -151,7 +157,7 @@ You can use only the user with admin role to create user.
 
 Request:
 ```
-curl -k --location 'https://localhost:30000/api/users' \
+curl --location 'https://localhost:30000/api/users' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Basic YWRtaW51c2VyOmFkbWludXNlcg==' \
 --data-raw '{
