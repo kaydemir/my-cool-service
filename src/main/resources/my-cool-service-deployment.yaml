@@ -24,7 +24,6 @@ kind: Service
 metadata:
   name: my-cool-service
 spec:
-  type: NodePort
   selector:
     app: my-cool-service
   ports:
@@ -32,4 +31,27 @@ spec:
       protocol: TCP
       port: 8000
       targetPort: 8000
-      nodePort: 30000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-cool-service-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  rules:
+    - host: my-cool-service
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-cool-service
+                port:
+                  number: 8000
+  tls:
+    - hosts:
+        - my-cool-service
+      secretName: my-tls-secret

@@ -81,7 +81,19 @@ NAME               DATA   AGE
 auth-policy        2      5h
 kube-root-ca.crt   1      5h31m
 ```
-5. Start `OPA` and `my-cool-service` clusters
+5. Create a TLS secret and check if it successfully created.
+```
+User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources
+$ cd ~/IdeaProjects/my-cool-service
+$ kubectl create secret tls my-tls-secret --cert=certificate.pem --key=private-key.pem
+secret/my-tls-secret created
+$ kubectl get secret
+NAME            TYPE                DATA   AGE
+my-tls-secret   kubernetes.io/tls   2      5h
+```
+
+
+6. Start `OPA` and `my-cool-service` clusters
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
@@ -90,7 +102,7 @@ $ kubectl apply -f my-cool-service-deployment.yaml
 $ kubectl apply -f opa-deployment.yaml
 ```
 
-6. Check the status of pods if the deployment is successful and clusters are running
+7. Check the status of pods if the deployment is successful and clusters are running
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
@@ -102,6 +114,11 @@ $ kubectl get pods
 NAME                                          READY   STATUS    RESTARTS   AGE
 my-cool-service-deployment-7bbbcd5856-fbzmj   1/1     Running   0          4h1m
 opa-5cc6d5dcfd-dcgtz                          1/1     Running   0          4h59m
+$ kubectl get services
+NAME              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+kubernetes        ClusterIP   10.96.0.1       <none>        443/TCP    4h59m
+my-cool-service   ClusterIP   10.106.33.200   <none>        8000/TCP   4h1m
+opa-service       ClusterIP   10.104.245.32   <none>        8181/TCP   4h59m
 ```
 
 ### 3. Testing the REST endpoints
@@ -116,22 +133,25 @@ secadminuser   secadminuser   ROLE_SECADMIN
 rolelessuser   rolelessuser     -
 ```
 
-You are ready to call REST API's provided for the task by using `curl` command below or [Postman](https://www.postman.com/downloads/) <br>
-<br>
-<b>Note:</b> For bypassing SSL verification, you can use `-k` (it is not a recommended practice) or use http in the curl command directly <br>
 
-For SSL verification, you need to import the [server.cer](server.cer) to your computer for SSL handshake between client and server.<br>
+<b>Note:</b> For bypassing SSL verification, you can use `-k` or use http in the below curl command directly (it is not a recommended practice) <br>
+
+For SSL verification, you need to import the [server.cer](server.cer) to your computer for SSL/TLS handshake between client and server.<br>
 Self signed certificates created by using [mkcert](https://github.com/FiloSottile/mkcert)
+
+
+Now you are ready to call REST API's provided for the task by using `kubectl` command below
+<br>
 
 ##### 3.1.1 GET users endpoint
 
 Basic authentication is needed to invoke API. 
 You can use one of the users above to authenticate and retrieve the results.
 
-Request:
+Request with rolelessuser
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
-$ curl --cacert server.cer --location 'https://localhost:30000/api/users' \
+$ kubectl run curlpod --image=radial/busyboxplus:curl -i --tty --rm --restart=Never -- curl --location 'https://my-cool-service:8000/api/users' \
 --header 'Authorization: Basic cm9sZWxlc3N1c2VyOnJvbGVsZXNzdXNlcg=='
 ```
 
@@ -156,16 +176,13 @@ Returns the users in the list format.
 Basic authentication and role authorization is needed to invoke API.
 You can use only the user with admin role to create user.
 
-Request:
+Request with adminuser:
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
-$ curl --cacert server.cer --location 'https://localhost:30000/api/users' \
+$ kubectl run curlpod --image=radial/busyboxplus:curl -i --tty --rm --restart=Never -- curl --location 'http://my-cool-service:8000/api/users' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Basic YWRtaW51c2VyOmFkbWludXNlcg==' \
---data-raw '{
-    "userName": "kaydemir",
-    "email" :"kemal.aydemir@gmail.com"
-}'
+--data '{"userName": "kaydemir","email" :"kemal.aydemir@dzsi.com"}'
 ```
 
 Response:
