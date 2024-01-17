@@ -87,31 +87,38 @@ User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources
 $ cd ~/IdeaProjects/my-cool-service
 $ kubectl create secret tls my-tls-secret --cert=certificate.pem --key=private-key.pem
 secret/my-tls-secret created
+kubectl create secret generic my-cool-service-cert --from-file=rootCA.pem
+secret/my-cool-service-cert created
 $ kubectl get secret
-NAME            TYPE                DATA   AGE
-my-tls-secret   kubernetes.io/tls   2      5h
+NAME                   TYPE                DATA   AGE
+my-cool-service-cert   Opaque              1      5h
+my-tls-secret          kubernetes.io/tls   2      5h
 ```
 
 
-6. Start `OPA` and `my-cool-service` clusters
+6. Start `OPA` and `my-cool-service` and `curl` clusters
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
 $ cd ~/IdeaProjects/my-cool-service/
 $ kubectl apply -f my-cool-service-deployment.yaml
 $ kubectl apply -f opa-deployment.yaml
+$ kubectl apply -f curl-deployment.yaml
 ```
 
-7. Check the status of pods if the deployment is successful and clusters are running
+7. Check the status of pods if the deployment is successful and clusters are running. Please note <b>
+the curl deployment name `curl-deployment-7577d6cf6c-qwnhf` which will be needed for testing purposes.
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
 $ kubectl get deployments
 NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+curl-deployment              1/1     1            1           4h4m
 my-cool-service-deployment   1/1     1            1           4h4m
 opa                          1/1     1            1           5h2m
 $ kubectl get pods
 NAME                                          READY   STATUS    RESTARTS   AGE
+curl-deployment-7577d6cf6c-qwnhf              1/1     Running   0          4h1m
 my-cool-service-deployment-7bbbcd5856-fbzmj   1/1     Running   0          4h1m
 opa-5cc6d5dcfd-dcgtz                          1/1     Running   0          4h59m
 $ kubectl get services
@@ -133,12 +140,7 @@ secadminuser   secadminuser   ROLE_SECADMIN
 rolelessuser   rolelessuser     -
 ```
 
-
-<b>Note:</b> For bypassing SSL verification, you can use `-k` or use http in the below curl command directly (it is not a recommended practice) <br>
-
-For SSL verification, you need to import the [server.cer](server.cer) to your computer for SSL/TLS handshake between client and server.<br>
-Self signed certificates created by using [mkcert](https://github.com/FiloSottile/mkcert)
-
+Self-signed CA [certificate](rootCA.pem) created by using [mkcert](https://github.com/FiloSottile/mkcert)
 
 Now you are ready to call REST API's provided for the task by using `kubectl` command below
 <br>
@@ -148,14 +150,14 @@ Now you are ready to call REST API's provided for the task by using `kubectl` co
 Basic authentication is needed to invoke API. 
 You can use one of the users above to authenticate and retrieve the results.
 
-Request with rolelessuser
+Example Request with rolelessuser:
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
-$ kubectl run curlpod --image=radial/busyboxplus:curl -i --tty --rm --restart=Never -- curl --location 'https://my-cool-service:8000/api/users' \
---header 'Authorization: Basic cm9sZWxlc3N1c2VyOnJvbGVsZXNzdXNlcg=='
+$ kubectl exec -i --tty curl-deployment-7577d6cf6c-qwnhf -- sh
+~ $ curl --location --cacert /etc/ssl/certs/rootCA.pem 'https://my-cool-service:8000/api/users' --header 'Authorization: Basic cm9sZWxlc3N1c2VyOnJvbGVsZXNzdXNlcg=='
 ```
 
-Response:
+Example Response:
 
 Returns the users in the list format.
 ```
@@ -176,16 +178,14 @@ Returns the users in the list format.
 Basic authentication and role authorization is needed to invoke API.
 You can use only the user with admin role to create user.
 
-Request with adminuser:
+Example Request with adminuser:
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
-$ kubectl run curlpod --image=radial/busyboxplus:curl -i --tty --rm --restart=Never -- curl --location 'http://my-cool-service:8000/api/users' \
---header 'Content-Type: application/json' \
---header 'Authorization: Basic YWRtaW51c2VyOmFkbWludXNlcg==' \
---data '{"userName": "kaydemir","email" :"kemal.aydemir@dzsi.com"}'
+$ kubectl exec -i --tty curl-deployment-7577d6cf6c-qwnhf -- sh
+~ $ curl --location --cacert /etc/ssl/certs/rootCA.pem 'https://my-cool-service:8000/api/users' --header 'Content-Type: application/json' --header 'Authorization: Basic YWRtaW51c2VyOmFkbWludXNlcg==' --data '{"userName": "kaydemir","email" :"kemal.aydemir@dzsi.com"}'
 ```
 
-Response:
+Example Response:
 
 Returns a boolean true if the user it created, otherwise return the details with
 appropriate http response code and description.
