@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curl-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curlpod
+  template:
+    metadata:
+      labels:
+        app: curlpod
+    spec:
+      volumes:
+        - name: cert-volume
+          secret:
+            secretName: my-cool-service-cert
+      containers:
+        - name: curl-container
+          image: curlimages/curl:latest
+          command:
+            - sleep
+            - "infinity"
+          volumeMounts:
+            - mountPath: /etc/ssl/certs
+              name: cert-volume
