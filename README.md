@@ -68,14 +68,13 @@ $ kubectl config use-context docker-desktop
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
-$ cd src/main/resources
 $ kubectl create configmap auth-policy --from-file=policies\swisscom\auth
 ```
 
 4. Check if configmaps successfully loaded
 
 ```
-User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources
+User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
 $ kubectl get configmap
 NAME               DATA   AGE
 auth-policy        2      5h
@@ -83,8 +82,7 @@ kube-root-ca.crt   1      5h31m
 ```
 5. Create a TLS secret and check if it successfully created.
 ```
-User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources
-$ cd ~/IdeaProjects/my-cool-service
+User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
 $ kubectl create secret tls my-tls-secret --cert=certificate.pem --key=private-key.pem
 secret/my-tls-secret created
 kubectl create secret generic my-cool-service-cert --from-file=rootCA.pem
@@ -99,15 +97,15 @@ my-tls-secret          kubernetes.io/tls   2      5h
 6. Start `OPA` and `my-cool-service` and `curl` clusters
 
 ```
-User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
-$ cd ~/IdeaProjects/my-cool-service/
+User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
+$ cd /src/main/resources/
 $ kubectl apply -f my-cool-service-deployment.yaml
 $ kubectl apply -f opa-deployment.yaml
 $ kubectl apply -f curl-deployment.yaml
 ```
 
-7. Check the status of pods if the deployment is successful and clusters are running. Please note <b>
-the curl deployment name `curl-deployment-7577d6cf6c-qwnhf` which will be needed for testing purposes.
+7. Check the status of pods if the deployment is successful and clusters are running. 
+Please note <br>curl deployment name `curl-deployment-7577d6cf6c-qwnhf` which will be needed for testing purposes.
 
 ```
 User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources/
@@ -152,7 +150,7 @@ You can use one of the users above to authenticate and retrieve the results.
 
 Example Request with rolelessuser:
 ```
-User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service
+User@DESKTOP MINGW64 ~/IdeaProjects/my-cool-service/src/main/resources
 $ kubectl exec -i --tty curl-deployment-7577d6cf6c-qwnhf -- sh
 ~ $ curl --location --cacert /etc/ssl/certs/rootCA.pem 'https://my-cool-service:8000/api/users' --header 'Authorization: Basic cm9sZWxlc3N1c2VyOnJvbGVsZXNzdXNlcg=='
 ```
